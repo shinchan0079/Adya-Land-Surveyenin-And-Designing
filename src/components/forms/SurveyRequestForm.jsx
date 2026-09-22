@@ -107,46 +107,42 @@ const SurveyRequestForm = () => {
     const whatsAppNumber = formData.customer.whatsappSameAsPhone ? formData.customer.phone : formData.customer.whatsapp;
     
     try {
-      const payload = {
-        name: formData.customer.name,
-        phone: formData.customer.phone,
-        type: 'Survey',
-        service: formData.service,
-        whatsapp: whatsAppNumber || '',
-        email: formData.customer.email || '',
-        location: `${formData.site.address}, ${formData.site.city}`,
-        data: {
-          site: formData.site,
-          requirement: formData.requirement,
-          hasDocuments: formData.documents.hasDocuments,
-          preferredContact: formData.customer.preferredContact
-        }
-      };
-
-      const data = await createLead(payload);
-      
-      const generatedId = data.leadCode;
-      
-      const message = `*NEW SURVEY REQUEST (${generatedId})*%0A%0A` +
-        `*1. SERVICE:* ${formData.service}%0A%0A` +
-        `*2. SITE DETAILS*%0A` +
-        `Location: ${formData.site.address}, ${formData.site.city}${formData.site.district ? `, ${formData.site.district}` : ''} ${formData.site.pincode}%0A` +
-        `Area: ${formData.site.area ? formData.site.area + ' ' + formData.site.unit : 'Not specified'}%0A` +
-        `Type: ${formData.site.siteType || 'Not specified'}%0A%0A` +
-        `*3. REQUIREMENT*%0A` +
-        `Description: ${formData.requirement.description}%0A` +
-        `Purpose: ${formData.requirement.purpose || 'Not specified'}%0A` +
-        `Preferred Discussion: ${formData.requirement.preferredDate}%0A%0A` +
-        `*4. DOCUMENTS*%0A` +
-        `Status: ${formData.documents.hasDocuments ? 'Has documents ready to share' : 'No documents available right now'}%0A%0A` +
-        `*5. CONTACT*%0A` +
-        `Name: ${formData.customer.name}%0A` +
-        `Phone: ${formData.customer.phone}%0A` +
-        `WhatsApp: ${whatsAppNumber || 'N/A'}%0A` +
-        `Email: ${formData.customer.email || 'N/A'}%0A` +
+      const rawMessage = `*NEW SURVEY REQUEST*\n\n` +
+        `*1. SERVICE:* ${formData.service}\n\n` +
+        `*2. SITE DETAILS*\n` +
+        `Location: ${formData.site.address}, ${formData.site.city}${formData.site.district ? `, ${formData.site.district}` : ''} ${formData.site.pincode}\n` +
+        `Area: ${formData.site.area ? formData.site.area + ' ' + formData.site.unit : 'Not specified'}\n` +
+        `Type: ${formData.site.siteType || 'Not specified'}\n\n` +
+        `*3. REQUIREMENT*\n` +
+        `Description: ${formData.requirement.description}\n` +
+        `Purpose: ${formData.requirement.purpose || 'Not specified'}\n` +
+        `Preferred Discussion: ${formData.requirement.preferredDate}\n\n` +
+        `*4. DOCUMENTS*\n` +
+        `Status: ${formData.documents.hasDocuments ? 'Has documents ready to share' : 'No documents available right now'}\n\n` +
+        `*5. CONTACT*\n` +
+        `Name: ${formData.customer.name}\n` +
+        `Phone: ${formData.customer.phone}\n` +
+        `WhatsApp: ${whatsAppNumber || 'N/A'}\n` +
+        `Email: ${formData.customer.email || 'N/A'}\n` +
         `Preferred Method: ${formData.customer.preferredContact}`;
 
-      setSuccessData({ leadCode: generatedId, message });
+      const whatsappNumber = '919453072917';
+      const emailAddress = 'adyalandsurvey@gmail.com';
+      
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
+      const mailtoUrl = `mailto:${emailAddress}?subject=${encodeURIComponent('Survey Request: ' + formData.service)}&body=${encodeURIComponent(rawMessage)}`;
+
+      // Open WhatsApp in a new tab
+      window.open(whatsappUrl, '_blank');
+      
+      // Trigger Mailto via hidden iframe to avoid popup/focus blockers
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = mailtoUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 2000);
+
+      setSuccessData({ leadCode: 'DIRECT-WA', message: rawMessage });
       
       const formElement = document.getElementById('survey-request-form');
       if(formElement) {
@@ -155,7 +151,7 @@ const SurveyRequestForm = () => {
       
     } catch (err) {
       console.error(err);
-      alert(err.message || 'There was an issue submitting your request. Please try again.');
+      alert('There was an issue processing your request. Please try WhatsApp directly.');
     } finally {
       setIsSubmitting(false);
     }

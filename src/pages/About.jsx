@@ -36,7 +36,7 @@ const About = () => {
         eyebrow="About Adya"
         title="20+ Years of Experience. Built on Precision & Practice."
         description="Adya Land Surveying And Design is a professional civil engineering and land surveying firm providing practical surveying, design and technical solutions backed by more than two decades of field experience."
-        image="/survey12.jpg"
+        image="/service_hero1.jpg"
       />
 
       {/* 2. WHO WE ARE */}

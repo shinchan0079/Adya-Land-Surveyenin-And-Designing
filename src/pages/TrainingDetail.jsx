@@ -69,37 +69,38 @@ const TrainingDetail = () => {
     setIsSubmitting(true);
 
     try {
-      const data = await createLead({
-        name: formData.name,
-        phone: formData.phone,
-        type: 'Training',
-        service: program.quickInfo.program,
-        whatsapp: formData.whatsapp || '',
-        email: formData.email || '',
-        location: formData.city || 'N/A',
-        data: {
-          qualification: formData.qualification,
-          organization: formData.organization,
-          message: formData.message
-        }
-      });
-
-      const message = `*TRAINING ENQUIRY*%0A%0A` +
-        `*Program:* ${program.quickInfo.program}%0A%0A` +
-        `*Name:* ${formData.name}%0A` +
-        `*Phone:* ${formData.phone}%0A` +
-        `*WhatsApp:* ${formData.whatsapp || 'Same'}%0A` +
-        `*Email:* ${formData.email || 'N/A'}%0A` +
-        `*Qualification:* ${formData.qualification}%0A` +
-        `*College/Company:* ${formData.organization || 'N/A'}%0A` +
-        `*City:* ${formData.city || 'N/A'}%0A%0A` +
+      const rawMessage = `*TRAINING ENQUIRY*\n\n` +
+        `*Program:* ${program.quickInfo.program}\n\n` +
+        `*Name:* ${formData.name}\n` +
+        `*Phone:* ${formData.phone}\n` +
+        `*WhatsApp:* ${formData.whatsapp || 'Same'}\n` +
+        `*Email:* ${formData.email || 'N/A'}\n` +
+        `*Qualification:* ${formData.qualification}\n` +
+        `*College/Company:* ${formData.organization || 'N/A'}\n` +
+        `*City:* ${formData.city || 'N/A'}\n\n` +
         `*Message:* ${formData.message || 'N/A'}`;
       
-      setSuccessData({ leadCode: data.leadCode, message });
+      const whatsappNumber = '919453072917';
+      const emailAddress = 'adyalandsurvey@gmail.com';
+      
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
+      const mailtoUrl = `mailto:${emailAddress}?subject=${encodeURIComponent('Training Enquiry: ' + program.quickInfo.program)}&body=${encodeURIComponent(rawMessage)}`;
+
+      // Open WhatsApp in a new tab
+      window.open(whatsappUrl, '_blank');
+      
+      // Trigger Mailto via hidden iframe to avoid popup/focus blockers
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = mailtoUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 2000);
+
+      setSuccessData({ leadCode: 'DIRECT-WA', message: rawMessage });
 
     } catch (err) {
       console.error(err);
-      alert(err.message || 'There was an issue submitting your enquiry. Please try WhatsApp directly.');
+      alert('There was an issue processing your request. Please try WhatsApp directly.');
     } finally {
       setIsSubmitting(false);
     }

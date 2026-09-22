@@ -30,26 +30,30 @@ const QuickEnquiryForm = () => {
     setIsSubmitting(true);
     
     try {
-      const data = await createLead({
-        name: quickForm.name,
-        phone: quickForm.phone,
-        type: 'Contact',
-        service: 'Quick Survey Enquiry',
-        location: quickForm.location,
-        data: {
-          survey_type: quickForm.type,
-          approx_area: quickForm.area || 'N/A'
-        }
-      });
-
-      const message = `Hello ADYA,%0A%0AI would like to request a quick survey discussion:%0A%0A*Name:* ${quickForm.name}%0A*Phone:* ${quickForm.phone}%0A*Site Location:* ${quickForm.location}%0A*Survey Type:* ${quickForm.type}%0A*Approx Area:* ${quickForm.area || 'N/A'}`;
+      const rawMessage = `Hello ADYA Land Surveyor,\n\nI would like to request a quick survey discussion:\n\n*Name:* ${quickForm.name}\n*Phone:* ${quickForm.phone}\n*Site Location:* ${quickForm.location}\n*Survey Type:* ${quickForm.type}\n*Approx Area:* ${quickForm.area || 'N/A'}`;
       
-      setSuccessData({ leadCode: data.leadCode, message });
+      const whatsappNumber = '919453072917';
+      const emailAddress = 'adyalandsurvey@gmail.com';
+      
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
+      const mailtoUrl = `mailto:${emailAddress}?subject=${encodeURIComponent('Quick Enquiry: ' + quickForm.type)}&body=${encodeURIComponent(rawMessage)}`;
+
+      // Open WhatsApp in a new tab
+      window.open(whatsappUrl, '_blank');
+      
+      // Trigger Mailto via hidden iframe to avoid popup/focus blockers
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = mailtoUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 2000);
+      
+      setSuccessData({ leadCode: 'DIRECT-WA', message: rawMessage });
       setQuickForm({ name: '', phone: '', location: '', type: '', area: '' });
       
     } catch (err) {
       console.error(err);
-      alert(err.message || 'There was an issue submitting your enquiry. Please try WhatsApp directly.');
+      alert('There was an issue processing your request. Please try WhatsApp directly.');
     } finally {
       setIsSubmitting(false);
     }

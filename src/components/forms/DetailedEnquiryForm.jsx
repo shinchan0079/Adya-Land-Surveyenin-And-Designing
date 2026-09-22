@@ -37,28 +37,31 @@ const DetailedEnquiryForm = () => {
     setIsSubmitting(true);
     
     try {
-      const data = await createLead({
-        name: mainForm.name,
-        phone: mainForm.phone,
-        type: 'Contact',
-        email: mainForm.email,
-        whatsapp: mainForm.whatsapp,
-        service: mainForm.service,
-        location: mainForm.location,
-        data: {
-          area: mainForm.area,
-          message: mainForm.message
-        }
-      });
-
-      const message = `Hello ADYA,%0A%0AI would like to submit a detailed enquiry:%0A%0A*Name:* ${mainForm.name}%0A*Phone:* ${mainForm.phone}%0A*WhatsApp:* ${mainForm.whatsapp || 'Same'}%0A*Email:* ${mainForm.email || 'N/A'}%0A*Service Required:* ${mainForm.service}%0A*Site Location:* ${mainForm.location}%0A*Approx Area:* ${mainForm.area || 'N/A'}%0A%0A*Requirement/Message:*%0A${mainForm.message}`;
+      const rawMessage = `Hello ADYA Land Surveyor,\n\nI would like to submit a detailed enquiry:\n\n*Name:* ${mainForm.name}\n*Phone:* ${mainForm.phone}\n*WhatsApp:* ${mainForm.whatsapp || 'Same'}\n*Email:* ${mainForm.email || 'N/A'}\n*Service Required:* ${mainForm.service}\n*Site Location:* ${mainForm.location}\n*Approx Area:* ${mainForm.area || 'N/A'}\n\n*Requirement/Message:*\n${mainForm.message}`;
       
-      setSuccessData({ leadCode: data.leadCode, message });
+      const whatsappNumber = '919453072917';
+      const emailAddress = 'adyalandsurvey@gmail.com';
+      
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(rawMessage)}`;
+      const mailtoUrl = `mailto:${emailAddress}?subject=${encodeURIComponent('New Enquiry: ' + mainForm.service)}&body=${encodeURIComponent(rawMessage)}`;
+
+      // Open WhatsApp in a new tab
+      window.open(whatsappUrl, '_blank');
+      
+      // Trigger Mailto via hidden iframe to avoid popup/focus blockers
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = mailtoUrl;
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 2000);
+      
+      // Set the success screen so the user knows it worked
+      setSuccessData({ leadCode: 'DIRECT-WA', message: rawMessage });
       setMainForm({ name: '', phone: '', whatsapp: '', email: '', service: '', location: '', area: '', message: '' });
       
     } catch (err) {
       console.error(err);
-      alert(err.message || 'There was an issue submitting your enquiry. Please try WhatsApp directly.');
+      alert('There was an issue processing your request. Please try WhatsApp directly.');
     } finally {
       setIsSubmitting(false);
     }

@@ -509,6 +509,7 @@ const Home = () => {
                     <Star fill="currentColor" size={14} />
                   </div>
                   <div className="text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-wider">Google Rating</div>
+                  <div className="text-[10px] font-medium text-gray-500 mt-1">(Based on 9 reviews)</div>
                 </div>
                 
                 <div>
@@ -517,11 +518,11 @@ const Home = () => {
                   </p>
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
-                      <div className="font-bold text-[#10263F] text-sm">Verified Client</div>
-                      <div className="text-[11px] text-gray-500">Lucknow, Uttar Pradesh</div>
+                      <div className="font-bold text-[#10263F] text-sm">Adya Land Surveying</div>
+                      <div className="text-[11px] text-gray-500">Gomti Nagar, Lucknow</div>
                     </div>
-                    <a href="#" className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-1.5 rounded-full inline-block">
-                      View on Google &rarr;
+                    <a href="https://maps.google.com/?cid=9111641281994060649" target="_blank" rel="noopener noreferrer" className="text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-1.5 rounded-full inline-block">
+                      View on Google Maps &rarr;
                     </a>
                   </div>
                 </div>
